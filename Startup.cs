@@ -6,6 +6,7 @@ using HotelListing.AutoMapperProfiles;
 using HotelListing.Data;
 using HotelListing.IRepository;
 using HotelListing.Repository;
+using HotelListing.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -37,8 +38,8 @@ namespace HotelListing
             options.UseSqlServer(Configuration.GetConnectionString("sqlConnection")));
 
             services.AddAuthentication();
-
             services.ConfigureIdentity();
+            services.ConfigureJWT(Configuration);
 
             services.AddCors(o => {
                 o.AddPolicy("AllowAll", builder =>
@@ -47,16 +48,49 @@ namespace HotelListing
             });
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IAuthManager, AuthManager>();
 
             services.AddAutoMapper(typeof(MapperInitializer));
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "HotelListing", Version = "v1" });
-            });
+            AddSwaggerDoc(services);
 
             services.AddControllers().AddNewtonsoftJson(op => op.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
+        }
+
+        private void AddSwaggerDoc(IServiceCollection services)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+                    Description = @"JWT Authorization header using the Bearer scheme.
+                                    Enter 'Bearer' [space] and then your token in the text input below",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "Oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header
+                        },
+                        new List<string>()
+                    }
+                });
+
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "HotelListing", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,6 +108,8 @@ namespace HotelListing
             app.UseCors("AllowAll");
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

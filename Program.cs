@@ -40,6 +40,10 @@ namespace HotelListing
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
             .UseSerilog()
+            .ConfigureHostConfiguration(configHost =>
+            {
+                configHost.AddEnvironmentVariables(prefix: "HL_");
+            })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

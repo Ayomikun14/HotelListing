@@ -23,7 +23,7 @@ namespace HotelListing
                     Name = "Administrator",
                     NormalizedName = "ADMINISTRATOR"
                 }
-            );
+            ); 
         }
     }
 }

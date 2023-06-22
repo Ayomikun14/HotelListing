@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace HotelListing.Configurations
 {
-    public class HotelConfiguration : IEntityTypeConfiguration<IdentityRole>
+    public class HotelConfiguration : IEntityTypeConfiguration<Hotel>
     {
-        public void Configure(EntityTypeBuilder<IdentityRole> builder)
+        public void Configure(EntityTypeBuilder<Hotel> builder)
         {
             builder.HasData(
                 new Hotel

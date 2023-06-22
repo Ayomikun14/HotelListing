@@ -18,10 +18,9 @@ namespace HotelListing.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
             builder.ApplyConfiguration(new CountryConfiguration());
-            builder.ApplyConfiguration(new RoleConfiguration());
             builder.ApplyConfiguration(new HotelConfiguration());
+            builder.ApplyConfiguration(new RoleConfiguration());
         }
     }
 }
