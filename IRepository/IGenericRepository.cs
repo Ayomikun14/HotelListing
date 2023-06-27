@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using HotelListing.Models;
+using X.PagedList;
 
 namespace HotelListing.IRepository
 {
@@ -21,5 +23,7 @@ namespace HotelListing.IRepository
         Task Delete(int id);
         void DeleteRange(IEnumerable<T> entities);
         void Update(T entity);
+        Task<IPagedList<T>> GetPagedList(
+            RequestParams requestParams, List<string> includes = null);
     }
 }
